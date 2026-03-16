@@ -1,25 +1,27 @@
 import http from 'node:http'
 import https from 'node:https'
-import dotenv from 'dotenv'
 import { PurgeCSS } from 'purgecss'
+// import dotenv from 'dotenv'
 // Load the base .env file first, then load the .env.dev or .env.local file. 
-dotenv.config()
-// The second file loaded will overwrite any duplicate keys from the first.
-const env = process.env.NODE_ENV || 'development'
-dotenv.config({ path: `.env.${env}`, override: true })
+// dotenv.config()
+// // The second file loaded will overwrite any duplicate keys from the first.
+// const env = process.env.NODE_ENV || 'development'
+// dotenv.config({ path: `.env.${env}`, override: true })
 
-export default function (pages) {
+export default function (pages, options = { siteUrl: null, cssPath: null, output: null }) {
+  if (!options?.siteUrl) throw new Error('Site url not founded.')
+
   function parseUrl(url, page) {
     let html = ''
     url.on('data', chunk => {
       html += chunk.toString().trim()
     }).on('end', async () => {
+      const settings = { content: [{ raw: html, extension: 'html' }] }
+      if (options?.cssPath) settings.css = [`${options.cssPath}${page.name}.css`]
+      if (options?.output) settings.output = options.output
+      if (page?.options) Object.assign(settings, page.options)
       try {
-        await new PurgeCSS().purge({
-          content: [{ raw: html, extension: 'html' }],
-          css: [`${process.env.CSS_PATH}${page.name}.css`],
-          output: process.env.CSS_PATH
-        })
+        await new PurgeCSS().purge(settings)
         console.log(`Done - ${page.name}.`)
       } catch (e) {
         console.error('Failed to purge page css.', e.message)
@@ -27,9 +29,9 @@ export default function (pages) {
     })
   }
 
-  pages.forEach(async (page) => {
+  pages.forEach(page => {
     try {
-      const url = new URL(`${process.env.SITE_URL}${page.url}`)
+      const url = new URL(`${options.siteUrl}${page.url}`)
       if (url.protocol === 'https:') {
         https.get(url, url => {
           parseUrl(url, page)

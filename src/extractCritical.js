@@ -1,8 +1,8 @@
 import http from 'node:http'
 import https from 'node:https'
 
-export default function (pages, options = { siteUrl: null, cssPath: null, targetDir: 'critical', assetsUrl: null, maxWidth: 2000, maxHeight: 1080 }) {
-  if (!options?.siteUrl) throw new Error('Site url option not founded.')
+export default function (pages, options = { siteUrl: null, cssPath: null, targetDir: 'critical', assetsUrl: null, width: 2000, height: 1080 }) {
+  if (!options?.siteUrl) throw new Error('Site url not founded.')
 
   function parseUrl(url, page) {
     let html = ''
@@ -12,8 +12,8 @@ export default function (pages, options = { siteUrl: null, cssPath: null, target
       const settings = { html }
       if (options?.cssPath) settings.base = options.cssPath.slice(1)
       if (options?.targetDir) settings.target = { css: `${options.targetDir}/${page.name}.css` }
-      if (options?.maxWidth) settings.width = options.maxWidth
-      if (options?.maxHeight) settings.height = options.maxHeight
+      if (options?.width) settings.width = options.width
+      if (options?.height) settings.height = options.height
       if (options?.assetsUrl) settings.rebase = (asset) => `${options.assetsUrl}${asset.absolutePath}`
       Object.assign(settings, page.options)
       const { generate } = await import('critical')
