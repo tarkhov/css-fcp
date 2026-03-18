@@ -9,7 +9,8 @@ import { PurgeCSS } from 'purgecss'
 // dotenv.config({ path: `.env.${env}`, override: true })
 
 export default function (pages, options = { siteUrl: null, cssPath: null, output: null }) {
-  if (!options?.siteUrl) throw new Error('Site url not founded.')
+  if (!pages?.length) throw new Error('Pages not found.')
+  if (!options?.siteUrl) throw new Error('Site url not found.')
 
   function parseUrl(url, page) {
     let html = ''
@@ -41,7 +42,7 @@ export default function (pages, options = { siteUrl: null, cssPath: null, output
           parseUrl(url, page)
         }).on('error', console.error)
       } else {
-        console.error('Url protocol not supported.')
+        console.error('URL protocol not supported.')
       }
     } catch (e) {
       console.error('Failed to parse url.', e.message)

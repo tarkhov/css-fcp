@@ -2,7 +2,8 @@ import http from 'node:http'
 import https from 'node:https'
 
 export default function (pages, options = { siteUrl: null, cssPath: null, targetDir: 'critical', assetsUrl: null, width: 2000, height: 1080 }) {
-  if (!options?.siteUrl) throw new Error('Site url not founded.')
+  if (!pages?.length) throw new Error('Pages not found.')
+  if (!options?.siteUrl) throw new Error('Site url not found.')
 
   function parseUrl(url, page) {
     let html = ''
@@ -23,7 +24,7 @@ export default function (pages, options = { siteUrl: null, cssPath: null, target
   }
 
   pages.forEach(page => {
-    if (!page?.options) throw new Error('Page options not founded.')
+    if (!page?.options) throw new Error('Page options not found.')
     try {
       const url = new URL(`${options.siteUrl}${page.url}`)
       if (url.protocol === 'https:') {
@@ -35,7 +36,7 @@ export default function (pages, options = { siteUrl: null, cssPath: null, target
           parseUrl(url, page)
         }).on('error', console.error)
       } else {
-        console.error('Url protocol not supported.')
+        console.error('URL protocol not supported.')
       }
     } catch (e) {
       console.error('Failed to parse url.', e.message)
