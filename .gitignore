@@ -1,3 +1,34 @@
+# https://github.com/github/gitignore/blob/main/Global/Linux.gitignore
+*~
+
+# temporary files which can be created if a process still has a handle open of a deleted file
+.fuse_hidden*
+
+# Metadata left by Dolphin file manager, which comes with KDE Plasma
+.directory
+
+# Linux trash folder which might appear on any partition or disk
+.Trash-*
+
+# .nfs files are created when an open file is removed but is still being accessed
+.nfs*
+
+# Log files created by default by the nohup command
+nohup.out
+
+# https://github.com/github/gitignore/blob/main/Global/VisualStudioCode.gitignore
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+!*.code-workspace
+
+# Built Visual Studio Code Extensions
+*.vsix
+
+# https://github.com/github/gitignore/blob/main/Node.gitignore
 # Logs
 logs
 *.log
@@ -80,7 +111,8 @@ out
 
 # Nuxt.js build / generate output
 .nuxt
-dist
+# dist
+.output
 
 # Gatsby files
 .cache/
@@ -134,6 +166,10 @@ dist
 !.yarn/sdks
 !.yarn/versions
 
-# Vite logs files
+# Vite files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+.vite/
+
+# Custom
+package-lock.json
