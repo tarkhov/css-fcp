@@ -1,14 +1,8 @@
 import http from 'node:http'
 import https from 'node:https'
 import { PurgeCSS } from 'purgecss'
-// import dotenv from 'dotenv'
-// Load the base .env file first, then load the .env.dev or .env.local file. 
-// dotenv.config()
-// // The second file loaded will overwrite any duplicate keys from the first.
-// const env = process.env.NODE_ENV || 'development'
-// dotenv.config({ path: `.env.${env}`, override: true })
 
-export default function (pages, options = { siteUrl: null, cssPath: null, output: null }) {
+export default function (pages, options = { siteUrl: null, cssPath: null, outputDir: null }) {
   if (!pages?.length) throw new Error('Pages not found.')
   if (!options?.siteUrl) throw new Error('Site url not found.')
 
@@ -18,8 +12,8 @@ export default function (pages, options = { siteUrl: null, cssPath: null, output
       html += chunk.toString().trim()
     }).on('end', async () => {
       const settings = { content: [{ raw: html, extension: 'html' }] }
-      if (options?.cssPath) settings.css = [`${options.cssPath}${page.name}.css`]
-      if (options?.output) settings.output = options.output
+      if (!page.options?.css && options?.cssPath) settings.css = [`${options.cssPath}${page.name}.css`]
+      if (!page.options?.output && options?.outputDir) settings.output = options.outputDir
       if (page?.options) Object.assign(settings, page.options)
       try {
         await new PurgeCSS().purge(settings)
