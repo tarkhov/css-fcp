@@ -1,6 +1,6 @@
 import http from 'node:http'
 import https from 'node:https'
-// import { generate } from 'critical'
+import { generate } from 'critical'
 
 export default function (pages, options = {
   siteUrl: null,
@@ -30,7 +30,7 @@ export default function (pages, options = {
       if (!page.options?.height && options?.height) settings.height = options.height
       if (!page.options?.rebase && options?.assetsUrl) settings.rebase = (asset) => `${options.assetsUrl}${asset.absolutePath}`
       Object.assign(settings, page.options)
-      const { generate } = await import('critical')
+      // const { generate } = await import('critical')
       await generate(settings)
       console.log(`Done - ${page.name}.`)
     })
