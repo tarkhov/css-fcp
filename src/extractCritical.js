@@ -5,10 +5,10 @@ import { generate } from 'critical'
 
 export default function (pages, options = {
   siteUrl: null,
-  baseDir: null,
-  targetDir: 'critical',
-  uncritDir: null,
-  cssDir: null,
+  basePath: null,
+  targetPath: 'critical',
+  uncritPath: null,
+  cssPath: null,
   assetsUrl: null,
   width: 2000,
   height: 1080
@@ -22,16 +22,14 @@ export default function (pages, options = {
       html += chunk.toString().trim()
     }).on('end', async () => {
       const settings = { html }
-      if (!page.options?.base && options?.baseDir) settings.base = options.baseDir
-      if (!page.options?.target) {
-        settings.target = {}
-        if (options?.targetDir) settings.target.css = path.join(options.targetDir, `${page.name}.css`)
-        if (options?.uncritDir) settings.target.uncritical = path.join(options.uncritDir, `${page.name}.css`)
-      }
-      if (!page.options?.css && options?.cssDir) settings.css = [path.join(options.cssDir, `${page.name}.css`)]
-      if (!page.options?.width && options?.width) settings.width = options.width
-      if (!page.options?.height && options?.height) settings.height = options.height
-      if (!page.options?.rebase && options?.assetsUrl) settings.rebase = (asset) => `${options.assetsUrl}${asset.absolutePath}`
+      if (options?.basePath) settings.base = options.basePath
+      settings.target = {}
+      settings.target.css = (options?.targetPath) ? path.join(options.targetPath, `${page.name}.css`) : `${page.name}.css`
+      settings.target.uncritical = (options?.uncritPath) ? path.join(options.uncritPath, `${page.name}.css`) : `${page.name}.css`
+      if (options?.cssPath) settings.css = [path.join(options.cssPath, `${page.name}.css`)]
+      if (options?.width) settings.width = options.width
+      if (options?.height) settings.height = options.height
+      if (options?.assetsUrl) settings.rebase = (asset) => `${options.assetsUrl}${asset.absolutePath}`
       if (page?.options) Object.assign(settings, page.options)
       // const { generate } = await import('critical')
       await generate(settings)

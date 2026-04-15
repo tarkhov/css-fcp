@@ -3,7 +3,7 @@ import https from 'node:https'
 import path from 'node:path'
 import { PurgeCSS } from 'purgecss'
 
-export default function (pages, options = { siteUrl: null, cssDir: null, outputDir: null }) {
+export default function (pages, options = { siteUrl: null, cssPath: null, outputPath: null }) {
   if (!pages?.length) throw new Error('Pages not found.')
   if (!options?.siteUrl) throw new Error('Site url not found.')
 
@@ -13,8 +13,8 @@ export default function (pages, options = { siteUrl: null, cssDir: null, outputD
       html += chunk.toString().trim()
     }).on('end', async () => {
       const settings = { content: [{ raw: html, extension: 'html' }] }
-      if (!page.options?.css && options?.cssDir) settings.css = [path.join(options.cssDir, `${page.name}.css`)]
-      if (!page.options?.output && options?.outputDir) settings.output = options.outputDir
+      if (options?.cssPath) settings.css = [path.join(options.cssPath, `${page.name}.css`)]
+      if (options?.outputPath) settings.output = options.outputPath
       if (page?.options) Object.assign(settings, page.options)
       try {
         await new PurgeCSS().purge(settings)
