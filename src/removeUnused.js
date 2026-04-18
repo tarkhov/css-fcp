@@ -1,46 +1,31 @@
-import http from 'node:http'
-import https from 'node:https'
-import path from 'node:path'
-import { PurgeCSS } from 'purgecss'
-
-export default function (pages, options = { siteUrl: null, cssPath: null, outputPath: null }) {
+export default async function (pages, options = { siteUrl: null, cssPath: null, outputPath: null, targetPath: null }) {
   if (!pages?.length) throw new Error('Pages not found.')
   if (!options?.siteUrl) throw new Error('Site url not found.')
 
-  function parseUrl(url, page) {
-    let html = ''
-    url.on('data', chunk => {
-      html += chunk.toString().trim()
-    }).on('end', async () => {
+  const { join } = await import('node:path')
+  const { writeFile } = await import('node:fs/promises')
+  const { PurgeCSS } = await import('purgecss')
+
+  for (const page of pages) {
+    try {
+      const url = new URL(page.url, options.siteUrl)
+      const res = await fetch(url)
+      if (!res.ok) throw new Error(`Error fetching page: ${url}`)
+      const html = await res.text()
+
       const settings = { content: [{ raw: html, extension: 'html' }] }
-      if (options?.cssPath) settings.css = [path.join(options.cssPath, `${page.name}.css`)]
+      if (options?.cssPath) settings.css = [join(options.cssPath, `${page.name}.css`)]
       if (options?.outputPath) settings.output = options.outputPath
       if (page?.options) Object.assign(settings, page.options)
-      try {
-        await new PurgeCSS().purge(settings)
-        console.log(`Done - ${page.name}.`)
-      } catch (e) {
-        console.error('Failed to purge page css.', e.message)
-      }
-    })
-  }
 
-  pages.forEach(page => {
-    try {
-      const url = new URL(`${options.siteUrl}${page.url}`)
-      if (url.protocol === 'https:') {
-        https.get(url, url => {
-          parseUrl(url, page)
-        }).on('error', console.error)
-      } else if (url.protocol === 'http:') {
-        http.get(url, url => {
-          parseUrl(url, page)
-        }).on('error', console.error)
-      } else {
-        console.error('URL protocol not supported.')
+      const result = await new PurgeCSS().purge(settings)
+      if (result?.length && options?.targetPath) {
+        const css = result.map(item => item.css).join('')
+        await writeFile(join(options.targetPath, `${page.name}.css`), css, { flag: 'w' })
       }
+      console.log('Done:', page.name)
     } catch (e) {
-      console.error('Failed to parse url.', e.message)
+      console.error('Error:', e.message)
     }
-  })
+  }
 }

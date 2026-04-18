@@ -12,12 +12,15 @@ export default defineConfig({
     lib: {
       entry: resolve(__dirname, 'src/main.js'),
       formats: ['es', 'cjs'], // Output as ES modules (standard for modern Node.js)
-      fileName: 'css-fcp'
+      // fileName: 'css-fcp'
     },
     target: 'node24',
     rollupOptions: {
-      external: [/^node:/]
-    },
+      external: [/^node:/],
+      output: {
+        entryFileNames: 'css-fcp.[format].js'
+      }
+    }
   },
   plugins: [
     banner(

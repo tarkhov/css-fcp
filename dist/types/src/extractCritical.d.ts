@@ -1,9 +1,10 @@
 export default function _default(pages: any, options?: {
     siteUrl: null;
-    baseDir: null;
-    targetDir: string;
-    uncritical: boolean;
+    basePath: null;
+    targetPath: string;
+    uncritPath: null;
+    cssPath: null;
     assetsUrl: null;
     width: number;
     height: number;
-}): void;
+}): Promise<void>;
