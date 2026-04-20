@@ -18,11 +18,11 @@ export default defineConfig({
       output: [
         {
           format: 'es',
-          entryFileNames: 'css-fcp.js'
+          entryFileNames: `${pkg.name}.js`
         },
         {
           format: 'cjs',
-          entryFileNames: 'css-fcp.cjs'
+          entryFileNames: `${pkg.name}.cjs`
         }
       ]
     }
