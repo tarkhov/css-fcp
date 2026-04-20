@@ -11,15 +11,20 @@ export default defineConfig({
     ssr: true, // To bundle Node.js scripts with Vite, you must configure it for a Node.js SSR or library target rather than the default browser environment.
     lib: {
       entry: resolve(__dirname, 'src/main.js'),
-      formats: ['es', 'cjs'], // Output as ES modules (standard for modern Node.js)
-      // fileName: 'css-fcp'
+      formats: ['es', 'cjs'] // Output as ES modules (standard for modern Node.js)
     },
     target: 'node24',
     rollupOptions: {
-      external: [/^node:/],
-      output: {
-        entryFileNames: 'css-fcp.[format].js'
-      }
+      output: [
+        {
+          format: 'es',
+          entryFileNames: 'css-fcp.js'
+        },
+        {
+          format: 'cjs',
+          entryFileNames: 'css-fcp.cjs'
+        }
+      ]
     }
   },
   plugins: [
