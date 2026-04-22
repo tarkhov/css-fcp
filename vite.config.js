@@ -10,8 +10,7 @@ export default defineConfig({
   build: {
     ssr: true, // To bundle Node.js scripts with Vite, you must configure it for a Node.js SSR or library target rather than the default browser environment.
     lib: {
-      entry: resolve(__dirname, 'src/main.js'),
-      formats: ['es', 'cjs'] // Output as ES modules (standard for modern Node.js)
+      entry: resolve(__dirname, 'src/main.js')
     },
     target: 'node24',
     rollupOptions: {
